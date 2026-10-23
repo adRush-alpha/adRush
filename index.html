@@ -146,10 +146,10 @@ let Q;
 function startQuiz(){PH='play';const r=S.runs.length+1;const ix=shuf(BANK.map((_,i)=>i),rng(r*7919+13)).slice(0,37),qs=ix.map(i=>BANK[i]);qs.splice(0,0,SPQ[0]);qs.splice(19,0,SPQ[1]);qs.push(SPQ[2]);Q={r,qs,i:0,pen:0,wrong:0,at:80000,st:0,t0:performance.now(),done:0};drawQ();loop()}
 const rem=()=>80000-(performance.now()-Q.t0)-Q.pen;
 function loop(){if(!Q||Q.done)return;const m=rem();if(m<=0)return finish(1);INT=Math.min(1,(80000-m)/80000);document.body.className=m<9000?'hot2':m<15000?'hot':'';const e=$('#clk');if(e){e.textContent=fmt(m);e.className=m<15000?'low':''}requestAnimationFrame(loop)}
-function drawQ(){const q=Q.qs[Q.i];Q.cur=shuf(q.o.slice(),Math.random);Q.first=1;
+function drawQ(){const q=Q.qs[Q.i];Q.cur=shuf(q.o.slice(),Math.random);Q.first=1;Q.e={c:q.c,f:1,w:0,d:0};(Q.log=Q.log||[]).push(Q.e);
 show(`<div class="row"><span class="mut">Run ${Q.r} · Q ${Q.i+1}/40</span><span class="mut">Wrong: ${Q.wrong}</span></div><div class="pill"><span id="clk">${fmt(rem())}</span></div>
 <div class="bar"><i style="width:${Q.i*100/40}%"></i></div><div class="q">${q.q}</div>${Q.cur.map((o,k)=>`<button class="opt" onclick="pick(this,${k})"><i>${'ABCDE'[k]}</i>${o}</button>`).join('')}`)}
-function pick(b,k){if(Q.done)return;if(Q.cur[k]===Q.qs[Q.i].a){sfx(1);(Q.log=Q.log||[]).push([Q.qs[Q.i].c,Q.first?1:0]);Q.st++;praise(PW[Math.min(Q.st,PW.length)-1]);Q.i++;Q.at=performance.now()-Q.t0+Q.pen;Q.i>=40?finish(0):drawQ()}else{sfx(0);Q.first=0;Q.st=0;Q.pen+=2000;Q.wrong++;b.disabled=true;b.classList.add('bad');if(navigator.vibrate)navigator.vibrate(80)}}
+function pick(b,k){if(Q.done)return;if(Q.cur[k]===Q.qs[Q.i].a){sfx(1);Q.e.d=1;Q.st++;praise(PW[Math.min(Q.st,PW.length)-1]);Q.i++;Q.at=performance.now()-Q.t0+Q.pen;Q.i>=40?finish(0):drawQ()}else{sfx(0);Q.first=0;Q.e.f=0;Q.e.w++;Q.st=0;Q.pen+=2000;Q.wrong++;b.disabled=true;b.classList.add('bad');if(navigator.vibrate)navigator.vibrate(80)}}
 let REMOTE=[];
 function LB(){const L=REMOTE.filter(x=>!x.me).map(x=>({...x,done:x.d}));
 const b=BR();if(b)L.push({n:S.name,d:b.done,done:b.done,t:b.t,me:1});L.sort((a,c)=>c.d-a.d||a.t-c.t);return{L,rk:L.findIndex(x=>x.me)+1,b}}
@@ -204,6 +204,6 @@ const app=initializeApp(cfg),auth=getAuth(app),db=getFirestore(app);
 const me=()=>auth.currentUser?Promise.resolve(auth.currentUser):signInAnonymously(auth).then(c=>c.user);
 window.FB={
 submit:async(n,d,t)=>{const u=await me();await setDoc(doc(db,"players",u.uid),{name:n,done:d,t:Math.round(t),ts:serverTimestamp()})},
-run:async(n,log)=>{const u=await me();const c={};log.forEach(([k,ok])=>{c[k]=c[k]||{ok:0,n:0};c[k].n++;c[k].ok+=ok});await addDoc(collection(db,"runs"),{uid:u.uid,run:n,cats:c,ts:serverTimestamp()})},
+run:async(n,log)=>{const u=await me();const c={};log.forEach(e=>{const k=e.c;c[k]=c[k]||{s:0,ok:0,ev:0,w:0};c[k].s++;c[k].ok+=(e.f&&e.d)?1:0;c[k].ev+=e.d;c[k].w+=e.w});await addDoc(collection(db,"runs"),{uid:u.uid,run:n,cats:c,ts:serverTimestamp()})},
 load:async()=>{const u=await me();const s=await getDocs(query(collection(db,"players"),orderBy("done","desc"),orderBy("t","asc"),limit(150)));return s.docs.map(x=>{const v=x.data();return{n:v.name,d:v.done,t:v.t,me:x.id===u.uid}})}}}
 </script></body></html>
