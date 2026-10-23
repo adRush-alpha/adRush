@@ -167,8 +167,8 @@ show(`<div class="row"><span class="mut">Run ${Q.r} · Q ${Q.i+1}/40</span><span
 function pick(b,k){if(Q.done)return;if(Q.cur[k]===Q.qs[Q.i].a){sfx(1);Q.st++;praise(PW[Math.min(Q.st,PW.length)-1]);Q.i++;Q.at=performance.now()-Q.t0+Q.pen;Q.i>=40?finish(0):drawQ()}else{sfx(0);Q.st=0;Q.pen+=2000;Q.wrong++;b.disabled=true;b.classList.add('bad');if(navigator.vibrate)navigator.vibrate(80)}}
 const PHONE=false;const online=()=>!!window.FB,tmo=ms=>new Promise((_,j)=>setTimeout(j,ms));
 async function getBoard(n){const b=BR();
-if(online()){try{const[top,r]=await Promise.race([Promise.all([FB.top(n),FB.rank()]),tmo(6000)]);return{L:top.map(x=>({n:x.name,d:x.done,t:x.t,me:x.id===r.uid})),rk:r.rk,N:r.N,b}}catch(e){console.error(e)}}
-const L=b?[{n:S.name,d:b.done,t:b.t,me:1}]:[];return{L,rk:L.length?1:0,N:L.length,b}}
+if(online()){try{const[top,r]=await Promise.race([Promise.all([FB.top(n),FB.rank()]),tmo(6000)]);return{L:top.map(x=>({n:x.name,done:x.done,t:x.t,me:x.id===r.uid})),rk:r.rk,N:r.N,b}}catch(e){console.error(e)}}
+const L=b?[{n:S.name,done:b.done,t:b.t,me:1}]:[];return{L,rk:L.length?1:0,N:L.length,b}}
 function roll(a,b,ms,cb,done,snd){const t0=performance.now();let lt=0;(function f(now){const p=Math.min(1,(now-t0)/ms),e=1-Math.pow(1-p,3);try{cb(a+(b-a)*e)}catch(x){return}
 if(snd&&now-lt>70&&p<1){lt=now;try{osc(AC.currentTime,300+p*700,.06,.25,'square')}catch(x){}}
 if(p<1)requestAnimationFrame(f);else if(done)done()})(t0)}
