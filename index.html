@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>adRush</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{--bg:#000308;--hot:#ff4d6d;--fg:#f5f6fb;--mut:#8f97b2;--card:rgba(255,255,255,.06);--line:rgba(90,170,255,.22);--acc:#1e90ff;--acc2:#4dd9ff;--g:linear-gradient(135deg,#0057ff,#00c8ff);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#f1f2f9;--fg:#12141c;--mut:#5b6277;--card:rgba(255,255,255,.85);--line:rgba(0,0,0,.1)}}
+:root[data-theme="dark"]{--bg:#000308;--fg:#f5f6fb;--mut:#8f97b2;--card:rgba(255,255,255,.06);--line:rgba(90,170,255,.22)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;min-height:100%}
+body{background:radial-gradient(900px 500px at 80% -10%,rgba(0,120,255,.35),transparent),radial-gradient(700px 500px at -10% 100%,rgba(0,200,255,.18),transparent),var(--bg);background-attachment:fixed;color:var(--fg);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+#app{max-width:480px;margin:0 auto;padding:16px;min-height:100vh}
+h1{font-size:40px;margin:8px 0;letter-spacing:-1.5px;font-weight:900}h2{margin:6px 0 10px;font-weight:800}
+.logo b{background:var(--g);-webkit-background-clip:text;background-clip:text;color:transparent}.mut{color:var(--mut)}.c{text-align:center}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;margin:12px 0;backdrop-filter:blur(10px)}
+.btn{display:block;width:100%;padding:16px;border:0;border-radius:16px;background:var(--g);color:#fff;font-size:17px;font-weight:800;margin:10px 0;cursor:pointer;box-shadow:0 8px 24px rgba(0,140,255,.5);transition:transform .1s}
+.btn:active{transform:scale(.97)}.btn.alt{background:var(--card);color:var(--fg);border:1px solid var(--line);box-shadow:none}.btn:disabled{opacity:.4}
+input{width:100%;padding:15px;border-radius:14px;border:1px solid var(--line);background:var(--card);color:var(--fg);font-size:16px;margin:6px 0}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}.tile{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;text-align:center}
+.tile b{display:block;font-size:34px;font-weight:900}
+.big{width:100%;font-size:130px;font-weight:900;text-align:center;color:var(--acc2);margin:70px 0;text-shadow:0 0 40px rgba(77,217,255,.6);animation:pop 1s infinite}
+@keyframes pop{0%{transform:scale(1.3);opacity:0}30%{opacity:1}100%{transform:scale(.9)}}
+.pill{text-align:center;margin:8px 0}#clk{display:inline-block;font-size:48px;font-weight:900;font-variant-numeric:tabular-nums;color:var(--acc2);background:var(--card);border:1px solid var(--line);border-radius:18px;padding:6px 22px}
+#clk.low{color:var(--hot);border-color:var(--hot)}
+.q{font-size:21px;font-weight:800;margin:16px 0 10px;line-height:1.25}
+.opt{display:flex;align-items:center;gap:14px;width:100%;text-align:left;min-height:56px;padding:10px 16px;margin:8px 0;border-radius:14px;border:1px solid var(--line);background:var(--card);color:var(--fg);font-size:17px;font-weight:600;cursor:pointer}
+.opt i{flex:none;width:28px;height:28px;border-radius:50%;border:2px solid var(--acc);color:var(--fg);font-style:normal;font-size:13px;display:grid;place-items:center;font-weight:800}
+.opt:active{transform:scale(.98)}.opt.bad{background:rgba(255,77,109,.25);border-color:var(--hot);opacity:.55;text-decoration:line-through}.opt.bad i{background:#555}
+.bar{height:8px;background:var(--line);border-radius:6px;overflow:hidden}.bar i{display:block;height:100%;background:var(--g);width:0;transition:width .2s}
+.lb{display:flex;justify-content:space-between;padding:10px 8px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+.me{background:rgba(0,150,255,.25);border-radius:10px;font-weight:800}
+.scene{background:#0b0d1e;border-radius:22px;overflow:hidden;border:1px solid var(--line);box-shadow:0 16px 40px rgba(0,0,0,.4)}
+.scene svg{display:block;width:100%;height:min(62vh,420px);animation:in .6s}@keyframes in{from{opacity:0;transform:scale(1.08)}}
+.walk{animation:bob 1s ease-in-out infinite alternate}@keyframes bob{to{transform:translateY(-6px)}}
+.rl{margin:0;padding-left:20px}.rl{font-size:15px}.rl li{margin:7px 0;line-height:1.4}
+.tag{display:inline-block;background:var(--g);color:#fff;border-radius:10px;padding:3px 10px;font-size:12px;font-weight:800;letter-spacing:1px}
+.cf{position:fixed;top:-20px;width:8px;height:14px;z-index:50;pointer-events:none;animation:fall 2.4s linear forwards}@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}@keyframes pop2{0%{transform:scale(1.7)}60%{transform:scale(.95)}100%{transform:scale(1)}}
+#vg{position:fixed;inset:0;pointer-events:none;opacity:0;box-shadow:inset 0 0 120px 30px rgba(255,20,60,.75)}
+body.hot #vg{animation:vp 1s infinite}body.hot2 #vg{animation:vp .45s infinite}body.hot2 #clk{animation:sh .2s infinite}
+@keyframes vp{50%{opacity:1}}@keyframes sh{25%{transform:translateX(-2px)}75%{transform:translateX(2px)}}
+</style></head><body><div id="vg"></div><div id="app"></div>
+<script>
+const $=q=>document.querySelector(q),app=$('#app');
+let S={runs:[],earned:0,codes:[]};
+try{S=Object.assign(S,JSON.parse(localStorage.getItem('adrush')||'{}'))}catch(e){}
+const save=()=>{try{localStorage.setItem('adrush',JSON.stringify(S))}catch(e){}};
+const show=h=>{app.innerHTML=h;scrollTo(0,0)};
+const fmt=ms=>(Math.max(0,ms)/1000).toFixed(3)+'s';
+function dayRoll(){const d=new Date().toLocaleDateString('en-CA');if(S.day!==d){S.day=d;S.used=0;S.earned=0;save()}}
+const TEST=false;const left=()=>{dayRoll();return TEST?999:Math.max(0,8+S.earned-(S.used||0))};
+const BR=()=>S.runs.filter(r=>r.done!=null).sort((a,b)=>b.done-a.done||a.t-b.t)[0];const rs=r=>!r?'–':r.done>=40?fmt(80000-r.t)+' left':r.done+'/40 in '+(r.t/1000).toFixed(1)+'s';
+function rng(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function shuf(a,r){for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+// ---------- demo ad (sponsors replace this) ----------
+const COL={Red:'#e53935',Blue:'#1e66f5',Green:'#2e9e4f',Yellow:'#f9d71c',Orange:'#fb8c00',Purple:'#8e44ad',Pink:'#f06fb0',Black:'#111',White:'#fafafa',Brown:'#8d5a2b'};
+const SKY={Sunrise:['#f6d365','#fda085'],Day:['#4facfe','#b5ecff'],Sunset:['#ff6a5b','#ffb86b'],Night:['#070b25','#2b2f77'],Stormy:['#2f3440','#69707d']};
+const BG={Lighthouse:'<rect x="30" y="150" width="22" height="82" fill="#eee"/><rect x="30" y="170" width="22" height="12" fill="#d33"/><rect x="30" y="196" width="22" height="12" fill="#d33"/><polygon points="26,150 56,150 41,132" fill="#555"/>',
+Fountain:'<rect x="205" y="224" width="60" height="10" fill="#9aa7b5"/><path d="M235 224V190M235 190Q220 200 216 224M235 190Q250 200 254 224" stroke="#bfe9ff" stroke-width="3" fill="none"/>',
+Mountains:'<polygon points="0,235 70,120 140,235" fill="#5a6475"/><polygon points="90,235 180,100 270,235" fill="#6d7788"/><polygon points="180,100 162,128 198,128" fill="#fff"/>',
+Skyscrapers:'<rect x="8" y="130" width="40" height="105" fill="#1a1f4a"/><rect x="58" y="90" width="45" height="145" fill="#222862"/><rect x="215" y="110" width="50" height="125" fill="#1a1f4a"/><rect x="270" y="150" width="30" height="85" fill="#222862"/>',
+Lake:'<polygon points="0,235 60,185 130,235" fill="#4a7a4a"/><polygon points="170,235 235,175 300,235" fill="#3d6b3d"/><ellipse cx="150" cy="232" rx="90" ry="8" fill="#3b8fd4"/>',
+Windmill:'<rect x="236" y="150" width="14" height="84" fill="#e8d9b5"/><path d="M243 150L215 125M243 150L271 175M243 150L271 125M243 150L215 175" stroke="#fff" stroke-width="4"/>'};
+const K=(o,x)=>COL[o],st='stroke="#fff" stroke-width="2"';
+const DRAW=[
+s=>`<path d="M60 213H240L215 250H85Z" fill="${K(s.m)}" ${st}/><text x="150" y="237" font-size="13" font-weight="800" fill="#fff" text-anchor="middle" font-family="sans-serif">${s.id}</text><rect x="148" y="90" width="4" height="123" fill="#ddd"/><polygon points="156,95 156,205 230,205" fill="${K(s.a)}" ${st}/>`+[...Array(s.n)].map((_,i)=>`<path d="M${25+i*55} ${55+i%2*22}q6-9 12 0q6-9 12 0" stroke="#fff" fill="none" stroke-width="2.5"/>`).join(''),
+s=>`<ellipse cx="150" cy="190" rx="46" ry="28" fill="${K(s.m)}"/>${[115,135,165,185].map(x=>`<rect x="${x}" y="205" width="12" height="32" rx="5" fill="${K(s.m)}"/>`).join('')}<path d="M106 180Q90 150 100 140" stroke="${K(s.m)}" stroke-width="10" fill="none" stroke-linecap="round"/><circle cx="205" cy="160" r="25" fill="${K(s.m)}"/><ellipse cx="192" cy="142" rx="8" ry="17" fill="#0005"/><circle cx="212" cy="156" r="3" fill="#111"/><circle cx="224" cy="166" r="5" fill="#111"/><rect x="188" y="178" width="32" height="8" rx="3" fill="${K(s.a)}"/><circle cx="204" cy="196" r="10" fill="#ffd54a" stroke="#fff"/><text x="204" y="199" font-size="7" font-weight="800" text-anchor="middle" fill="#111" font-family="sans-serif">${s.id}</text>`+[...Array(s.n)].map((_,i)=>`<circle cx="${40+i*28}" cy="252" r="10" fill="#d7f205" ${st}/>`).join(''),
+s=>[...Array(s.n)].map((_,i)=>`<g fill="#fff" opacity=".9"><ellipse cx="${30+i*55}" cy="${40+i%3*24}" rx="26" ry="10"/><ellipse cx="${44+i*55}" cy="${34+i%3*24}" rx="15" ry="10"/></g>`).join('')+`<polygon points="130,155 195,155 165,220 130,220" fill="${K(s.m)}" ${st}/><ellipse cx="150" cy="150" rx="92" ry="25" fill="${K(s.m)}" ${st}/><polygon points="225,135 268,88 282,88 258,152" fill="${K(s.a)}" ${st}/>${[95,120,145,170].map(x=>`<circle cx="${x}" cy="142" r="5" fill="#cfe9ff"/>`).join('')}<text x="150" y="168" font-size="20" font-weight="900" text-anchor="middle" fill="#111" font-family="sans-serif">${s.id}</text>`,
+s=>[...Array(s.n)].map((_,i)=>`<rect x="${25+i*125}" y="110" width="4" height="125" fill="#888"/><circle cx="${27+i*125}" cy="108" r="9" fill="#ffe066"/>`).join('')+`<path d="M95 170L120 135H190L215 170Z" fill="${K(s.m)}" ${st}/><path d="M105 168L125 142H150V168ZM158 168V142H187L205 168Z" fill="#bfe3ff"/><rect x="55" y="170" width="190" height="46" rx="14" fill="${K(s.m)}" ${st}/><rect x="58" y="184" width="184" height="6" fill="${K(s.a)}"/>${[95,205].map(x=>`<circle cx="${x}" cy="218" r="21" fill="#222" stroke="#aaa" stroke-width="3"/><circle cx="${x}" cy="218" r="8" fill="#ccc"/>`).join('')}<rect x="188" y="196" width="54" height="15" rx="3" fill="#fff" stroke="#333"/><text x="215" y="208" font-size="10" font-weight="800" text-anchor="middle" fill="#111" font-family="sans-serif">${s.id}</text>`,
+s=>`<path d="M105 160L130 215M195 160L170 215" stroke="#654" stroke-width="2"/><ellipse cx="150" cy="105" rx="62" ry="75" fill="${K(s.m)}" ${st}/><ellipse cx="150" cy="105" rx="22" ry="75" fill="${K(s.a)}"/><rect x="122" y="213" width="56" height="30" rx="4" fill="#b07a3a" ${st}/><text x="150" y="232" font-size="10" font-weight="800" text-anchor="middle" fill="#fff" font-family="sans-serif">${s.id}</text>`+[...Array(s.n)].map((_,i)=>`<circle cx="${126+i*16}" cy="256" r="7" fill="#8b6b3d" ${st}/>`).join(''),
+s=>`<path d="M40 62L260 62" stroke="#fff" stroke-width="2"/>`+[...Array(s.n)].map((_,i)=>`<polygon points="${50+i*55},62 ${66+i*55},62 ${58+i*55},82" fill="#ffd54a"/>`).join('')+`<g fill="none" stroke="#222" stroke-width="5"><circle cx="95" cy="205" r="34"/><circle cx="205" cy="205" r="34"/></g><path d="M95 205L140 150H195L205 205M140 150L125 140M95 205H150L190 150" stroke="${K(s.m)}" stroke-width="7" fill="none"/><rect x="132" y="168" width="26" height="17" fill="#fff" stroke="#333"/><text x="145" y="181" font-size="11" font-weight="800" text-anchor="middle" fill="#111" font-family="sans-serif">${s.id}</text><path d="M195 150L190 120L210 117" stroke="#222" stroke-width="5" fill="none"/><rect x="208" y="102" width="36" height="24" rx="4" fill="${K(s.a)}" ${st}/>`];
+const SC=[
+{o:'boat',m:'Red',a:'White',part:'sail',n:3,nl:'seagulls',idq:'What name was painted on the boat?',id:'Sea Star',idp:['Sea Star','Blue Wave','Lucky Fin','Aqua Jet','Tide Runner'],sky:'Sunset',bg:'Lighthouse',gr:'#1f6fb5',fl:'Milk Chocolate'},
+{o:'dog',m:'Brown',a:'Red',part:'collar',n:2,nl:'tennis balls',idq:'What name was on the dog’s tag?',id:'Max',idp:['Max','Rex','Bella','Coco','Duke'],sky:'Day',bg:'Fountain',gr:'#3f9e4a',fl:'Crunch'},
+{o:'plane',m:'Yellow',a:'Blue',part:'tail',n:5,nl:'clouds',idq:'What number was painted on the plane?',id:'27',idp:['27','14','52','8','63'],sky:'Stormy',bg:'Mountains',gr:'#3b6b3b',fl:'Almond'},
+{o:'car',m:'Green',a:'Orange',part:'racing stripe',n:3,nl:'streetlights',idq:'What was written on the car’s number plate?',id:'BOLT 42',idp:['BOLT 42','RUSH 07','FAST 88','ZOOM 15','GO 321'],sky:'Night',bg:'Skyscrapers',gr:'#2b2b33',fl:'Quinoa Crunch'},
+{o:'balloon',m:'Purple',a:'Pink',part:'stripe',n:4,nl:'sandbags',idq:'What name was on the balloon’s basket?',id:'Skyline',idp:['Skyline','Cloud 9','Sunbird','Drifter','Aerial'],sky:'Sunrise',bg:'Lake',gr:'#4a9e5c',fl:'Peanut Butter'},
+{o:'bike',m:'Blue',a:'Yellow',part:'basket',n:4,nl:'flags',idq:'What number was on the bike’s race plate?',id:'18',idp:['18','35','7','42','61'],sky:'Day',bg:'Windmill',gr:'#6aa84f',fl:'Cookies and Creme'}];
+const ORD=['1st','2nd','3rd','4th','5th','6th'],SN=['Milk Chocolate','Crunch','Almond','Quinoa Crunch','Peanut Butter','Cookies and Creme'],cap=w=>w[0].toUpperCase()+w.slice(1);
+function scene(k){const s=SC[k],[t,b]=SKY[s.sky];
+const sun=s.sky=='Night'?'<circle cx="240" cy="55" r="16" fill="#f5f5dc"/>'+[[40,40],[90,70],[150,30],[200,80],[270,25],[20,100]].map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="1.6" fill="#fff"/>`).join(''):s.sky=='Stormy'?'':'<circle cx="245" cy="60" r="24" fill="#fff6b0" opacity=".9"/>';
+return `<svg viewBox="0 0 300 340" preserveAspectRatio="xMidYMid meet"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${t}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs><rect width="300" height="340" fill="url(#g)"/>${sun}${BG[s.bg]}<rect y="235" width="300" height="105" fill="${s.gr}"/><g class="walk">${DRAW[k](s)}</g><rect y="296" width="300" height="44" fill="#000b"/><text x="150" y="309" font-size="9" fill="#fff" text-anchor="middle" font-family="sans-serif" letter-spacing="2">CHOCOLATE BARS · TASTE THE RUSH</text><text x="150" y="328" font-size="13" font-weight="900" fill="#ffc233" text-anchor="middle" font-family="sans-serif">FEASTABLES · ${s.fl}</text></svg>`}
+const BANK=(()=>{const b=[],R=rng(99);const mk=(q,a,pool)=>{b.push({q,a,o:[a,...shuf(pool.filter(x=>x!==a),R).slice(0,4)]})};
+SC.forEach((s,i)=>{const o=s.o;
+mk(`What colour was the ${o}?`,s.m,Object.keys(COL));
+mk(`What colour was the ${s.part} on the ${o}?`,s.a,Object.keys(COL));
+mk(`How many ${s.nl} were in the ${o} scene?`,String(s.n),['1','2','3','4','5','6']);
+mk(s.idq,s.id,s.idp);
+mk(`What time of day was the ${o} scene?`,s.sky,Object.keys(SKY));
+mk(`Which Feastables flavour appeared in the ${o} scene?`,s.fl,SN);
+mk(`What was in the background of the ${o} scene?`,s.bg,Object.keys(BG));
+mk(`What was the ${ORD[i]} thing shown in the ad?`,cap(o),SC.map(x=>cap(x.o)))});return b})();
+const SPQ=[['Who sponsored this ad?','Feastables',['Fruitables','Feast Bites','Feastly','Treatables']],['What does Feastables sell?','Chocolate bars',['Sneakers','Soft drinks','Headphones','Ice cream']],['What was the Feastables slogan?','Taste the Rush',['Taste the Thunder','Power Up Daily','Snack Like a Champ','Bite the Lightning']]].map(([q,a,d])=>({q,a,o:[a,...d]}));
+// ---------- music: builds with intensity (0 calm → 1 frantic) ----------
+let AC,M=null,INT=0,PH='play';
+function MS(){if(!AC.MG){const g=AC.createGain();g.gain.value=1.5;const c=AC.createDynamicsCompressor();g.connect(c);c.connect(AC.destination);AC.MG=g}return AC.MG}
+function osc(t,f,d,v,type,f2,cut){const o=AC.createOscillator(),g=AC.createGain(),l=AC.createBiquadFilter();o.type=type;o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);l.type='lowpass';l.frequency.value=cut||9000;g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(l);l.connect(g);g.connect(MS());o.start(t);o.stop(t+d+.02)}
+function noise(t,d,v,f){const n=AC.sampleRate*d,b=AC.createBuffer(1,n,AC.sampleRate),a=b.getChannelData(0);for(let i=0;i<n;i++)a[i]=Math.random()*2-1;const s=AC.createBufferSource(),h=AC.createBiquadFilter(),g=AC.createGain();s.buffer=b;h.type='highpass';h.frequency.value=f;g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);s.connect(h);h.connect(g);g.connect(MS());s.start(t)}
+const BASS=[55,55,110,55,58.27,55,77.78,58.27];
+function music(on){if(on&&M)return;if(M){clearInterval(M.iv);try{M.r.stop()}catch(e){}M=null}if(!on)return;
+try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();AC.resume()}catch(e){return}
+const r=AC.createOscillator(),rg=AC.createGain();r.type='sine';r.frequency.value=55;rg.gain.value=0;r.connect(rg);rg.connect(MS());r.start();
+M={step:0,next:AC.currentTime+.1,r,rg};
+M.iv=setInterval(()=>{while(M&&M.next<AC.currentTime+.15){const i=INT,s=M.step,t=M.next,sd=60/(PH=='login'?35.7:PH=='ad'?35.7+(AD?Math.min(1,AD.t/30000):0)*11.9:PH=='intro'?49.3:54.4+i*34)/4;if(PH=='login'||PH=='ad'){const a=PH=='ad'&&AD?Math.min(1,AD.t/30000):0,v=.55+a*.35;if(s%4==0)osc(t,150,.3,v,'sine',40);if(s%4==1)osc(t,150,.25,v*.65,'sine',40);M.r.frequency.setTargetAtTime(55,t,.1);M.rg.gain.setTargetAtTime(a*.025,t,.1);M.step++;M.next+=sd;continue}if(PH=='intro'){if(s%4==0)osc(t,150,.3,.9,'sine',40);if(s%4==1)osc(t,150,.25,.6,'sine',40);if(s%16==0)osc(t,55,sd*14,.28,'sawtooth',null,160);if(s%16==8)osc(t,58.27,sd*7,.22,'sawtooth',null,160);M.r.frequency.setTargetAtTime(55,t,.1);M.rg.gain.setTargetAtTime(.03,t,.1);M.step++;M.next+=sd;continue}
+if(s%4==0)osc(t,160,.2,.5,'sine',40);
+if(i>.6&&s%8==6)osc(t,160,.15,.3,'sine',40);
+osc(t,BASS[s%8],sd*1.7,.2,'sawtooth',null,200+i*900);
+if(i>.35&&(i<.7?s%4==2:s%2==0))noise(t,.05,.04+i*.05,8000);
+
+
+
+M.r.frequency.setTargetAtTime(55,t,.1);M.rg.gain.setTargetAtTime(.02,t,.1);
+M.step++;M.next+=sd}},25)}
+const sfx=(ok)=>{try{ok?osc(AC.currentTime,660,.12,.18,'triangle',990):osc(AC.currentTime,140,.3,.4,'sawtooth',60)}catch(e){}};
+const PW=['Good','Great','Amazing','Splendid','Fabulous','Wonderful','Fantastic','Excellent','Magnificent','Superb','Outstanding','Phenomenal','Unstoppable','Legendary'];
+function praise(w){say(w,1.15);toast(w)}
+function toast(w){const d=document.createElement('div');d.textContent=w;d.style.cssText='position:fixed;left:0;right:0;top:50%;margin-top:-24px;text-align:center;font-size:38px;font-weight:900;color:#4dd9ff;text-shadow:0 0 20px #0080ff;pointer-events:none;transition:all .7s;opacity:1';document.body.appendChild(d);setTimeout(()=>{d.style.opacity=0;d.style.transform='translateY(-30px)'},50);setTimeout(()=>d.remove(),800)}
+function vtest(){const s=window.speechSynthesis,o=$('#vt');if(!s){o.textContent='No speech support in this browser.';return}o.textContent='Voices: '+s.getVoices().length+'. Speaking...';music(false);try{AC&&AC.suspend()}catch(e){}try{s.cancel();const u=new SpeechSynthesisUtterance('Ready to rush?');u.onstart=()=>o.textContent+=' Started.';u.onend=()=>o.textContent+=' Finished.';u.onerror=e=>o.textContent+=' Error: '+e.error;s.speak(u)}catch(e){o.textContent='Failed: '+e}setTimeout(()=>{try{AC&&AC.resume()}catch(e){}PH='login';music(true)},4000)}
+function say(t,r){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.rate=r||1.05;speechSynthesis.speak(u)}catch(e){}}
+// ---------- screens ----------
+const LOGO=`<svg viewBox="0 0 340 118" style="width:100%;max-width:360px;filter:drop-shadow(0 0 14px rgba(0,150,255,.8))"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4dd9ff"/><stop offset=".5" stop-color="#1e90ff"/><stop offset="1" stop-color="#0057ff"/></linearGradient><linearGradient id="sg" x1="0" x2="1"><stop offset="0" stop-color="#4dd9ff" stop-opacity="0"/><stop offset="1" stop-color="#4dd9ff"/></linearGradient></defs><rect x="2" y="58" width="50" height="6" rx="3" fill="url(#sg)"/><rect x="14" y="68" width="38" height="6" rx="3" fill="url(#sg)"/><rect x="0" y="78" width="52" height="6" rx="3" fill="url(#sg)"/><text x="58" y="88" font-family="system-ui,sans-serif" font-weight="900" font-style="italic" letter-spacing="-2"><tspan font-size="52" style="fill:var(--fg)">ad</tspan><tspan font-size="98" fill="url(#lg)">R</tspan><tspan font-size="52" dx="-10" style="fill:var(--fg)">ush</tspan><tspan font-size="17" dx="-2" dy="-36" style="fill:var(--fg)" opacity=".9">®</tspan></text><text x="205" y="109" text-anchor="middle" font-size="12" font-weight="700" letter-spacing="2.5" font-family="system-ui,sans-serif" style="fill:var(--fg)" opacity=".75">WATCH. REMEMBER. RUSH.</text></svg>`;
+function login(){show(`<div class="c" style="margin-top:50px">${LOGO}</div>
+<div class="card"><h2>Log in</h2><input id="nm" placeholder="Player name" maxlength="14" value="${S.name||''}"><input id="ph" type="tel" placeholder="Phone number (SMS check in live version)"><button class="btn" onclick="doLogin()">Enter</button></div>`)}
+function doLogin(){const n=$('#nm').value.trim();if(!n){$('#nm').focus();return}S.name=n;save();try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();AC.resume()}catch(e){}splash()}
+function splash(){show(`<div class="c" style="margin-top:120px"><p class="mut">SPONSOR OF THE WEEK</p><h1 style="font-size:46px;color:var(--acc2);text-shadow:0 0 40px rgba(77,217,255,.5)">FEASTABLES</h1><p class="mut">Demo sponsor</p><div class="bar" style="margin-top:40px"><i id="sb" style="transition:width 10s linear"></i></div></div>`);setTimeout(()=>{const b=$('#sb');if(b)b.style.width='100%'},50);setTimeout(()=>S.seen?home():rules(),10000)}
+function rules(){show(`<h2>How to play</h2><div class="card"><ul class="rl"><li><b>Watch</b> the 30-second ad closely.</li><li><b>Rush:</b> answer 40 questions. Each wrong tap costs −2 seconds.</li><li><b>Clock</b> starts at 80.000s. Most time left wins.</li><li><b>Out of time?</b> Your correct answers still count. If nobody finishes all 40, most correct answers wins, then fastest.</li><li><b>10 tries a day:</b> 8 free + 2 earned by inviting new friends. Resets daily. Best run counts.</li><li><b>Ties:</b> time left, then next-best run, then earliest server timestamp. All results are final.</li></ul></div><button class="btn" onclick="S.seen=1;save();home()">Got it</button>`)}
+function home(){music(false);const l=left();document.body.className='';show(`<div style="max-width:230px;margin:0 auto 6px">${LOGO}</div>
+<div class="tiles"><div class="tile" style="padding:8px"><span class="mut" style="font-size:13px">Tries left today</span><b style="font-size:26px">${l>=999?'∞':l}</b></div><div class="tile" style="padding:8px"><span class="mut" style="font-size:13px">Best run</span><b style="font-size:17px;padding:5px 0">${rs(BR())}</b></div></div>
+<button class="btn" style="margin:10px 0;padding:14px" ${l<1?'disabled':''} onclick="playAd(false)">PLAY</button>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px"><button class="btn alt" style="margin:0;padding:12px 4px;font-size:14px" onclick="rules()">Rules</button><button class="btn alt" style="margin:0;padding:12px 4px;font-size:14px" onclick="board()">Leaderboard</button><button class="btn alt" style="margin:0;padding:12px 4px;font-size:14px" onclick="earn()">Earn tries</button></div>
+<div class="card" style="padding:8px 14px;margin:10px 0 0"><div class="mut c" style="font-size:12px">Prize pool (demo)</div><div class="lb" style="padding:5px 4px;font-size:14px"><span>1st place</span><span>$31,500</span></div><div class="lb" style="padding:5px 4px;font-size:14px"><span>2nd place</span><span>$12,600</span></div><div class="lb" style="padding:5px 4px;font-size:14px"><span>3rd place</span><span>$6,300</span></div><div class="lb" style="padding:5px 4px;font-size:14px;border:0"><span>Next 20 players</span><span>$630 each</span></div></div>`)}
+// ---------- ad ----------
+let AD;
+function playAd(study){music(false);try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();AC.resume()}catch(e){}try{speechSynthesis.cancel();speechSynthesis.getVoices()}catch(e){}AD={t:0,p:false,l:performance.now(),sc:-1};
+show(`<div class="row" style="margin-bottom:10px"><span class="tag">${study?'STUDY MODE':'WATCH CLOSELY'}</span><span class="mut">Feastables</span></div><div class="scene" id="sc"></div><div class="bar" style="margin:14px 0"><i id="pb"></i></div>
+${study?`<input type="range" id="sl" min="0" max="29999" value="0" oninput="AD.t=+this.value">
+<div class="row"><button class="btn alt" style="margin:0" onclick="AD.p=!AD.p;this.textContent=AD.p?'Play':'Pause'">Pause</button><button class="btn alt" style="margin:0" onclick="shareAd()">Share ad</button></div><button class="btn" onclick="stopAd();home()">Done</button>`:''}`);
+AD.iv=setInterval(()=>{const n=performance.now();if(!AD.p)AD.t+=n-AD.l;AD.l=n;
+if(AD.t>=30000){if(study)AD.t=0;else{stopAd();return rush()}}
+const k=Math.min(5,Math.floor(AD.t/5000));if(AD.sc!==k){AD.sc=k;$('#sc').innerHTML=scene(k)}
+$('#pb').style.width=(AD.t/300)+'%';const sl=$('#sl');if(sl&&document.activeElement!==sl)sl.value=AD.t},50)}
+function stopAd(){if(AD)clearInterval(AD.iv)}
+function shareAd(){try{navigator.share?navigator.share({title:'adRush – Feastables ad',text:'Study this ad, then beat my time on adRush!',url:location.href}):alert('Share link: '+location.href)}catch(e){}}
+// ---------- rush ----------
+function rush(){INT=0;PH='intro';try{AC&&AC.resume()}catch(e){}music(true);show('<div style="display:flex;align-items:center;justify-content:center;min-height:85vh;overflow:hidden"><div class="big" id="cd" style="font-size:min(10.5vw,46px);animation:none;margin:0">Ready to Rush?</div></div>');say('Ready to rush?');
+let n=5;setTimeout(function t(){const e=$('#cd'),W=Math.min(innerWidth,480);e.style.cssText='margin:0;line-height:1';e.style.animation='none';void e.offsetWidth;e.style.animation='';if(n<1){e.innerHTML='LET’S<br>RUSH!';e.style.fontSize=Math.min(.27*W,112)+'px';e.style.lineHeight='1';e.style.letterSpacing='-2px';say('Let’s rush!');return setTimeout(startQuiz,1300)}e.textContent=n;e.style.fontSize=W*(.28+(5-n)*.065)+'px';try{osc(AC.currentTime,200+(5-n)*100,.3,.3,'triangle')}catch(x){}say(String(n));n--;setTimeout(t,1000)},3800)}
+let Q;
+function startQuiz(){PH='play';const r=S.runs.length+1;const ix=shuf(BANK.map((_,i)=>i),rng(r*7919+13)).slice(0,37),qs=ix.map(i=>BANK[i]);qs.splice(0,0,SPQ[0]);qs.splice(19,0,SPQ[1]);qs.push(SPQ[2]);Q={r,qs,i:0,pen:0,wrong:0,at:80000,st:0,t0:performance.now(),done:0};drawQ();loop()}
+const rem=()=>80000-(performance.now()-Q.t0)-Q.pen;
+function loop(){if(!Q||Q.done)return;const m=rem();if(m<=0)return finish(1);INT=Math.min(1,(80000-m)/80000);document.body.className=m<9000?'hot2':m<15000?'hot':'';const e=$('#clk');if(e){e.textContent=fmt(m);e.className=m<15000?'low':''}requestAnimationFrame(loop)}
+function drawQ(){const q=Q.qs[Q.i];Q.cur=shuf(q.o.slice(),Math.random);
+show(`<div class="row"><span class="mut">Run ${Q.r} · Q ${Q.i+1}/40</span><span class="mut">Wrong: ${Q.wrong}</span></div><div class="pill"><span id="clk">${fmt(rem())}</span></div>
+<div class="bar"><i style="width:${Q.i*100/40}%"></i></div><div class="q">${q.q}</div>${Q.cur.map((o,k)=>`<button class="opt" onclick="pick(this,${k})"><i>${'ABCDE'[k]}</i>${o}</button>`).join('')}`)}
+function pick(b,k){if(Q.done)return;if(Q.cur[k]===Q.qs[Q.i].a){sfx(1);Q.st++;praise(PW[Math.min(Q.st,PW.length)-1]);Q.i++;Q.at=performance.now()-Q.t0+Q.pen;Q.i>=40?finish(0):drawQ()}else{sfx(0);Q.st=0;Q.pen+=2000;Q.wrong++;b.disabled=true;b.classList.add('bad');if(navigator.vibrate)navigator.vibrate(80)}}
+function LB(){const R=rng(5),L=[],N=['Ava','Kai','Mia','Leo','Zoe','Ben','Ivy','Max','Eli','Sam','Nia','Tom','Amy','Raj','Lia','Dan','Eva','Joe','Uma','Ned','Fay','Gus','Ana','Ty'];
+for(let i=0;i<150;i++)L.push({n:N[i%24]+(i>=24?' '+(i+7):''),d:40,t:80000-Math.round((44-i*.26+R()*.9)*1000)});
+const b=BR();if(b)L.push({n:S.name,d:b.done,t:b.t,me:1});L.sort((a,c)=>c.d-a.d||a.t-c.t);return{L,rk:L.findIndex(x=>x.me)+1,b}}
+function roll(a,b,ms,cb,done,snd){const t0=performance.now();let lt=0;(function f(now){const p=Math.min(1,(now-t0)/ms),e=1-Math.pow(1-p,3);try{cb(a+(b-a)*e)}catch(x){return}
+if(snd&&now-lt>70&&p<1){lt=now;try{osc(AC.currentTime,300+p*700,.06,.25,'square')}catch(x){}}
+if(p<1)requestAnimationFrame(f);else if(done)done()})(t0)}
+function confetti(n){const C=['#ffd54a','#4dd9ff','#4d9fff','#ff4d6d','#fff'];for(let i=0;i<n;i++){const d=document.createElement('div');d.className='cf';d.style.cssText='left:'+Math.random()*100+'vw;background:'+C[i%5]+';animation-delay:'+Math.random()*.8+'s;animation-duration:'+(1.8+Math.random()*1.4)+'s';document.body.appendChild(d);setTimeout(()=>d.remove(),4200)}}
+function endRank(rk){const t=$('#tier'),n=$('#rn');if(!t||!n)return;
+const T=rk==1?['NUMBER ONE!','#ffd54a']:rk<=3?['PODIUM FINISH','#ffd54a']:rk<=10?['TOP 10','#4dd9ff']:rk<=23?['IN THE PRIZE ZONE','#4d9fff']:rk<=30?['TOP 30','#4d9fff']:['KEEP CLIMBING','#9aa1b5'];
+t.textContent=T[0];t.style.color=T[1];n.style.color=T[1];if(rk<=30)n.style.textShadow='0 0 40px '+T[1];if(rk<=10)n.style.animation='pop2 .6s ease-out';
+if(rk<=3)confetti(rk==1?90:45);if(navigator.vibrate&&rk<=10)navigator.vibrate(rk==1?[80,60,80,60,200]:[100,60,100]);
+try{[523,659,784,1047].slice(0,rk==1?4:rk<=10?3:2).forEach((f,i)=>osc(AC.currentTime+i*.12,f,.4,.3,'triangle'))}catch(e){}
+const b=$('#btns');if(b)b.style.opacity=1}
+function finish(out){if(Q.done)return;Q.done=1;music(false);document.body.className='';
+const prev=BR(),r=out?0:Math.max(0,Math.round(rem()));
+S.runs.push({r:Q.r,rem:r,done:Q.i,t:Q.at,wrong:Q.wrong});S.used=(S.used||0)+1;save();
+const better=!prev||Q.i>prev.done||(Q.i==prev.done&&Q.at<prev.t),{L,rk}=LB(),N=L.length,fin=!out;
+show(`<div class="c" style="margin-top:14px"><h1>${out?'Time’s up':'Finished!'}</h1>
+<div id="sc" style="font-size:64px;font-weight:900;color:var(--acc2);font-variant-numeric:tabular-nums;text-shadow:0 0 30px rgba(77,217,255,.5)">${fin?'0.000s':'0/40'}</div>
+<p class="mut" style="margin:0">${out?'Correct answers':'Time left'} · ${Q.wrong} wrong tap${Q.wrong==1?'':'s'}</p>
+<div id="pb" style="min-height:26px;margin:12px 0;font-weight:800;letter-spacing:2px;color:var(--acc2)"></div>
+<div id="rk" style="opacity:0;transition:opacity .4s"><div class="mut" style="font-size:13px;letter-spacing:2px">YOUR RANK</div><div id="rn" style="font-size:78px;font-weight:900;line-height:1">#${N}</div><div id="tier" style="font-size:20px;font-weight:900;min-height:28px;margin-top:6px"></div></div></div>
+<div id="btns" style="opacity:0;transition:opacity .5s;margin-top:10px"><button class="btn" onclick="board()">Leaderboard</button><button class="btn alt" onclick="home()">Home</button></div>`);
+setTimeout(()=>{const b=$('#btns');if(b)b.style.opacity=1},9000);
+roll(0,fin?r/1000:Q.i,2200,v=>{$('#sc').textContent=fin?v.toFixed(3)+'s':Math.round(v)+'/40'},()=>{
+const pb=$('#pb');if(!pb)return;pb.textContent=prev?(better?'NEW PERSONAL BEST':'Best so far: '+rs(BR())):'';if(prev&&!better)say('Not bad. You can do it. Rush again!');
+if(better&&prev)try{[523,659,784].forEach((f,i)=>osc(AC.currentTime+i*.1,f,.3,.3,'triangle'))}catch(e){}
+setTimeout(()=>{const k=$('#rk');if(!k)return;k.style.opacity=1;
+roll(N,rk,rk<N?3200:500,v=>{const q=Math.round(v);$('#rn').textContent='#'+q;$('#tier').textContent=q<=1?'NUMBER ONE!':q<=3?'PODIUM':q<=10?'TOP 10':q<=30?'TOP 30':''},()=>endRank(rk),1)},better&&prev?1000:500)},1)}
+// ---------- leaderboard ----------
+function board(){const {L,rk,b}=LB();
+show(`<h2>Leaderboard</h2><div class="card c">${rk?`Your rank<div style="font-size:56px;font-weight:900">#${rk}</div><span class="mut">of ${L.length} (demo players)</span>`:'Finish a run to get ranked'}</div>
+<div class="card">${L.slice(0,12).map((x,i)=>`<div class="lb ${x.me?'me':''}"><span>#${i+1} ${x.n}</span><span>${rs(x)}</span></div>`).join('')}${rk>12?`<div class="lb me"><span>#${rk} ${S.name}</span><span>${rs(b)}</span></div>`:''}</div>
+<p class="mut" style="font-size:13px">Live version: server-verified times, one prize per verified person, live final for the top players. Ties: time left, then next-best run, then earliest server timestamp.</p><button class="btn alt" onclick="home()">Back</button>`)}
+// ---------- earn tries ----------
+function earn(){show(`<h2>Earn extra tries</h2><div class="card"><p>Invite a <b>new</b> friend to adRush. When they join and finish a run, you earn <b>1 extra try</b>. You can earn 2 each day this way.</p><p class="mut">Earned today: ${S.earned} of 2. The same person can’t be counted twice.</p><button class="btn" onclick="invite()">Invite a friend</button><p id="msg" class="mut c"></p><p class="mut c" style="font-size:12px">Demo: the try is added as soon as you tap Invite.</p></div><button class="btn alt" onclick="home()">Back</button>`)}
+function grant(m){if(S.earned>=2){$('#msg').textContent='You already have both earned tries.';return}S.earned++;save();$('#msg').textContent=m+' +1 try!'}
+function invite(){shareAd();grant('Invite sent.')}
+login();
+</script></body></html>
