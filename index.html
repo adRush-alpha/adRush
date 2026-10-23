@@ -119,7 +119,7 @@ function say(t,r){try{speechSynthesis.cancel();const u=new SpeechSynthesisUttera
 const LOGO=`<svg viewBox="0 0 340 118" style="width:100%;max-width:360px;filter:drop-shadow(0 0 14px rgba(0,150,255,.8))"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4dd9ff"/><stop offset=".5" stop-color="#1e90ff"/><stop offset="1" stop-color="#0057ff"/></linearGradient><linearGradient id="sg" x1="0" x2="1"><stop offset="0" stop-color="#4dd9ff" stop-opacity="0"/><stop offset="1" stop-color="#4dd9ff"/></linearGradient></defs><rect x="2" y="58" width="50" height="6" rx="3" fill="url(#sg)"/><rect x="14" y="68" width="38" height="6" rx="3" fill="url(#sg)"/><rect x="0" y="78" width="52" height="6" rx="3" fill="url(#sg)"/><text x="58" y="88" font-family="system-ui,sans-serif" font-weight="900" font-style="italic" letter-spacing="-2"><tspan font-size="52" style="fill:var(--fg)">ad</tspan><tspan font-size="98" fill="url(#lg)">R</tspan><tspan font-size="52" dx="-10" style="fill:var(--fg)">ush</tspan><tspan font-size="17" dx="-2" dy="-36" style="fill:var(--fg)" opacity=".9">®</tspan></text><text x="205" y="109" text-anchor="middle" font-size="12" font-weight="700" letter-spacing="2.5" font-family="system-ui,sans-serif" style="fill:var(--fg)" opacity=".75">WATCH. REMEMBER. RUSH.</text></svg>`;
 function login(){show(`<div class="c" style="margin-top:50px">${LOGO}</div>
 <div class="card"><h2>Log in</h2><input id="nm" placeholder="Player name" maxlength="14" value="${S.name||''}"><input id="ph" type="tel" placeholder="Phone number (SMS check in live version)"><button class="btn" onclick="doLogin()">Enter</button></div>`)}
-function doLogin(){const n=$('#nm').value.trim();if(!n){$('#nm').focus();return}S.name=n;save();try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();AC.resume()}catch(e){}splash()}
+function doLogin(){const n=$('#nm').value.trim();if(!n){$('#nm').focus();return}S.name=n;save();if(window.FB)FB.load().then(r=>REMOTE=r).catch(()=>{});try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();AC.resume()}catch(e){}splash()}
 function splash(){show(`<div class="c" style="margin-top:120px"><p class="mut">SPONSOR OF THE WEEK</p><h1 style="font-size:46px;color:var(--acc2);text-shadow:0 0 40px rgba(77,217,255,.5)">FEASTABLES</h1><p class="mut">Demo sponsor</p><div class="bar" style="margin-top:40px"><i id="sb" style="transition:width 10s linear"></i></div></div>`);setTimeout(()=>{const b=$('#sb');if(b)b.style.width='100%'},50);setTimeout(()=>S.seen?home():rules(),10000)}
 function rules(){show(`<h2>How to play</h2><div class="card"><ul class="rl"><li><b>Watch</b> the 30-second ad closely.</li><li><b>Rush:</b> answer 40 questions. Each wrong tap costs −2 seconds.</li><li><b>Clock</b> starts at 80.000s. Most time left wins.</li><li><b>Out of time?</b> Your correct answers still count. If nobody finishes all 40, most correct answers wins, then fastest.</li><li><b>10 tries a day:</b> 8 free + 2 earned by inviting new friends. Resets daily. Best run counts.</li><li><b>Ties:</b> time left, then next-best run, then earliest server timestamp. All results are final.</li></ul></div><button class="btn" onclick="S.seen=1;save();home()">Got it</button>`)}
 function home(){music(false);const l=left();document.body.className='';show(`<div style="max-width:230px;margin:0 auto 6px">${LOGO}</div>
@@ -150,9 +150,9 @@ function drawQ(){const q=Q.qs[Q.i];Q.cur=shuf(q.o.slice(),Math.random);
 show(`<div class="row"><span class="mut">Run ${Q.r} · Q ${Q.i+1}/40</span><span class="mut">Wrong: ${Q.wrong}</span></div><div class="pill"><span id="clk">${fmt(rem())}</span></div>
 <div class="bar"><i style="width:${Q.i*100/40}%"></i></div><div class="q">${q.q}</div>${Q.cur.map((o,k)=>`<button class="opt" onclick="pick(this,${k})"><i>${'ABCDE'[k]}</i>${o}</button>`).join('')}`)}
 function pick(b,k){if(Q.done)return;if(Q.cur[k]===Q.qs[Q.i].a){sfx(1);Q.st++;praise(PW[Math.min(Q.st,PW.length)-1]);Q.i++;Q.at=performance.now()-Q.t0+Q.pen;Q.i>=40?finish(0):drawQ()}else{sfx(0);Q.st=0;Q.pen+=2000;Q.wrong++;b.disabled=true;b.classList.add('bad');if(navigator.vibrate)navigator.vibrate(80)}}
-function LB(){const R=rng(5),L=[],N=['Ava','Kai','Mia','Leo','Zoe','Ben','Ivy','Max','Eli','Sam','Nia','Tom','Amy','Raj','Lia','Dan','Eva','Joe','Uma','Ned','Fay','Gus','Ana','Ty'];
-for(let i=0;i<150;i++)L.push({n:N[i%24]+(i>=24?' '+(i+7):''),d:40,t:80000-Math.round((44-i*.26+R()*.9)*1000)});
-const b=BR();if(b)L.push({n:S.name,d:b.done,t:b.t,me:1});L.sort((a,c)=>c.d-a.d||a.t-c.t);return{L,rk:L.findIndex(x=>x.me)+1,b}}
+let REMOTE=[];
+function LB(){const L=REMOTE.filter(x=>!x.me).map(x=>({...x,done:x.d}));
+const b=BR();if(b)L.push({n:S.name,d:b.done,done:b.done,t:b.t,me:1});L.sort((a,c)=>c.d-a.d||a.t-c.t);return{L,rk:L.findIndex(x=>x.me)+1,b}}
 function roll(a,b,ms,cb,done,snd){const t0=performance.now();let lt=0;(function f(now){const p=Math.min(1,(now-t0)/ms),e=1-Math.pow(1-p,3);try{cb(a+(b-a)*e)}catch(x){return}
 if(snd&&now-lt>70&&p<1){lt=now;try{osc(AC.currentTime,300+p*700,.06,.25,'square')}catch(x){}}
 if(p<1)requestAnimationFrame(f);else if(done)done()})(t0)}
@@ -166,6 +166,7 @@ const b=$('#btns');if(b)b.style.opacity=1}
 function finish(out){if(Q.done)return;Q.done=1;music(false);document.body.className='';
 const prev=BR(),r=out?0:Math.max(0,Math.round(rem()));
 S.runs.push({r:Q.r,rem:r,done:Q.i,t:Q.at,wrong:Q.wrong});S.used=(S.used||0)+1;save();
+if(window.FB&&S.name){const bb=BR();FB.submit(S.name,bb.done,bb.t).then(()=>FB.load()).then(r=>REMOTE=r).catch(()=>{})}
 const better=!prev||Q.i>prev.done||(Q.i==prev.done&&Q.at<prev.t),{L,rk}=LB(),N=L.length,fin=!out;
 show(`<div class="c" style="margin-top:14px"><h1>${out?'Time’s up':'Finished!'}</h1>
 <div id="sc" style="font-size:64px;font-weight:900;color:var(--acc2);font-variant-numeric:tabular-nums;text-shadow:0 0 30px rgba(77,217,255,.5)">${fin?'0.000s':'0/40'}</div>
@@ -180,13 +181,27 @@ if(better&&prev)try{[523,659,784].forEach((f,i)=>osc(AC.currentTime+i*.1,f,.3,.3
 setTimeout(()=>{const k=$('#rk');if(!k)return;k.style.opacity=1;
 roll(N,rk,rk<N?3200:500,v=>{const q=Math.round(v);$('#rn').textContent='#'+q;$('#tier').textContent=q<=1?'NUMBER ONE!':q<=3?'PODIUM':q<=10?'TOP 10':q<=30?'TOP 30':''},()=>endRank(rk),1)},better&&prev?1000:500)},1)}
 // ---------- leaderboard ----------
-function board(){const {L,rk,b}=LB();
-show(`<h2>Leaderboard</h2><div class="card c">${rk?`Your rank<div style="font-size:56px;font-weight:900">#${rk}</div><span class="mut">of ${L.length} (demo players)</span>`:'Finish a run to get ranked'}</div>
+function board(f){const {L,rk,b}=LB();
+show(`<h2>Leaderboard</h2><div class="card c" id="lbv">${rk?`Your rank<div style="font-size:56px;font-weight:900">#${rk}</div><span class="mut">of ${L.length} players</span>`:'Finish a run to get ranked'}</div>
 <div class="card">${L.slice(0,12).map((x,i)=>`<div class="lb ${x.me?'me':''}"><span>#${i+1} ${x.n}</span><span>${rs(x)}</span></div>`).join('')}${rk>12?`<div class="lb me"><span>#${rk} ${S.name}</span><span>${rs(b)}</span></div>`:''}</div>
-<p class="mut" style="font-size:13px">Live version: server-verified times, one prize per verified person, live final for the top players. Ties: time left, then next-best run, then earliest server timestamp.</p><button class="btn alt" onclick="home()">Back</button>`)}
+<p class="mut" style="font-size:13px">${window.FB?'Live scores from everyone playing.':'Firebase not connected: showing this device only.'} Ties: time left, then next-best run, then earliest server timestamp.</p><button class="btn alt" onclick="home()">Back</button>`);
+if(!f&&window.FB)FB.load().then(r=>{REMOTE=r;if($('#lbv'))board(1)}).catch(()=>{})}
 // ---------- earn tries ----------
 function earn(){show(`<h2>Earn extra tries</h2><div class="card"><p>Invite a <b>new</b> friend to adRush. When they join and finish a run, you earn <b>1 extra try</b>. You can earn 2 each day this way.</p><p class="mut">Earned today: ${S.earned} of 2. The same person can’t be counted twice.</p><button class="btn" onclick="invite()">Invite a friend</button><p id="msg" class="mut c"></p><p class="mut c" style="font-size:12px">Demo: the try is added as soon as you tap Invite.</p></div><button class="btn alt" onclick="home()">Back</button>`)}
 function grant(m){if(S.earned>=2){$('#msg').textContent='You already have both earned tries.';return}S.earned++;save();$('#msg').textContent=m+' +1 try!'}
 function invite(){shareAd();grant('Invite sent.')}
 login();
+</script>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import{getAuth,signInAnonymously}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import{getFirestore,doc,setDoc,collection,query,orderBy,limit,getDocs,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+// PASTE YOUR FIREBASE WEB CONFIG HERE (Project settings > Your apps > Web app). It is safe to be public.
+const cfg={apiKey:"PASTE_API_KEY",authDomain:"PASTE_PROJECT_ID.firebaseapp.com",projectId:"PASTE_PROJECT_ID",appId:"PASTE_APP_ID"};
+if(!cfg.apiKey.startsWith("PASTE")){
+const app=initializeApp(cfg),auth=getAuth(app),db=getFirestore(app);
+const me=()=>auth.currentUser?Promise.resolve(auth.currentUser):signInAnonymously(auth).then(c=>c.user);
+window.FB={
+submit:async(n,d,t)=>{const u=await me();await setDoc(doc(db,"players",u.uid),{name:n,done:d,t:Math.round(t),ts:serverTimestamp()})},
+load:async()=>{const u=await me();const s=await getDocs(query(collection(db,"players"),orderBy("done","desc"),orderBy("t","asc"),limit(150)));return s.docs.map(x=>{const v=x.data();return{n:v.name,d:v.done,t:v.t,me:x.id===u.uid}})}}}
 </script></body></html>
