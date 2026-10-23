@@ -134,7 +134,7 @@ try{await FB.verify(c)}catch(e){$('#go').disabled=false;$('#lm').textContent='Wr
 await syncTries();splash()}
 async function syncTries(){dayRoll();if(!online())return;try{const u=await FB.tries(S.day);if(u!=null){S.used=u;save()}}catch(e){console.error(e)}}
 async function spend(){dayRoll();if(left()<1)return false;
-if(online()){try{S.used=await FB.useTry(S.name,S.day);save();return true}catch(e){console.error(e);alert('Could not start your run. Check your connection and that your phone date and time are correct.');return false}}
+if(online()){try{S.used=await FB.useTry(S.name,S.day);save();return true}catch(e){console.error(e);alert('Could not start your run ['+(e.code||e.message)+']. Check your connection and that your phone date and time are correct.');return false}}
 S.used=(S.used||0)+1;save();return true}
 async function boot(){if(online()){try{const u=await Promise.race([FB.user(),tmo(8000)]);if(u&&S.name){await syncTries();return splash()}}catch(e){console.error(e)}}login()}
 function splash(){show(`<div class="c" style="margin-top:120px"><p class="mut">SPONSOR OF THE WEEK</p><h1 style="font-size:46px;color:var(--acc2);text-shadow:0 0 40px rgba(77,217,255,.5)">FEASTABLES</h1><p class="mut">Demo sponsor</p><div class="bar" style="margin-top:40px"><i id="sb" style="transition:width 10s linear"></i></div></div>`);setTimeout(()=>{const b=$('#sb');if(b)b.style.width='100%'},50);setTimeout(()=>S.seen?home():rules(),10000)}
