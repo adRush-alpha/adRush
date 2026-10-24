@@ -143,7 +143,7 @@ function home(){music(false);const l=left();document.body.className='';show(`<di
 <div class="tiles"><div class="tile" style="padding:8px"><span class="mut" style="font-size:13px">Tries left today</span><b style="font-size:26px">${l>=999?'∞':l}</b></div><div class="tile" style="padding:8px"><span class="mut" style="font-size:13px">Best run</span><b style="font-size:17px;padding:5px 0">${rs(BR())}</b></div></div>
 <button class="btn" style="margin:10px 0;padding:14px" ${l<1?'disabled':''} onclick="playAd(false)">PLAY</button>
 <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px"><button class="btn alt" style="margin:0;padding:12px 4px;font-size:14px" onclick="rules()">Rules</button><button class="btn alt" style="margin:0;padding:12px 4px;font-size:14px" onclick="board()">Leaderboard</button><button class="btn alt" style="margin:0;padding:12px 4px;font-size:14px" onclick="earn()">Earn tries</button></div>
-<div class="card" style="padding:8px 14px;margin:10px 0 0"><div class="mut c" style="font-size:12px">Prize pool (demo)</div><div class="lb" style="padding:5px 4px;font-size:14px"><span>1st place</span><span>$31,500</span></div><div class="lb" style="padding:5px 4px;font-size:14px"><span>2nd place</span><span>$12,600</span></div><div class="lb" style="padding:5px 4px;font-size:14px"><span>3rd place</span><span>$6,300</span></div><div class="lb" style="padding:5px 4px;font-size:14px;border:0"><span>Next 20 players</span><span>$630 each</span></div></div>`)}
+<div class="card" style="padding:8px 14px;margin:10px 0 0"><div class="mut c" style="font-size:12px">Prize pool (demo)</div><div class="lb" style="padding:5px 4px;font-size:14px"><span>1st place</span><span>R20</span></div><div class="lb" style="padding:5px 4px;font-size:14px"><span>2nd place</span><span>R10</span></div><div class="lb" style="padding:5px 4px;font-size:14px"><span>3rd place</span><span>R5</span></div><div class="lb" style="padding:5px 4px;font-size:14px;border:0"><span>4th to 50th</span><span>R1 each</span></div></div>`)}
 // ---------- ad ----------
 let AD;
 async function playAd(study){initAudio();if(!study&&!await spend())return;music(false);try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();AC.resume()}catch(e){}try{speechSynthesis.cancel();speechSynthesis.getVoices()}catch(e){}AD={t:0,p:false,l:performance.now(),sc:-1};
@@ -176,8 +176,8 @@ if(snd&&now-lt>70&&p<1){lt=now;try{osc(AC.currentTime,300+p*700,.06,.25,'square'
 if(p<1)requestAnimationFrame(f);else if(done)done()})(t0)}
 function confetti(n){const C=['#ffd54a','#4dd9ff','#4d9fff','#ff4d6d','#fff'];for(let i=0;i<n;i++){const d=document.createElement('div');d.className='cf';d.style.cssText='left:'+Math.random()*100+'vw;background:'+C[i%5]+';animation-delay:'+Math.random()*.8+'s;animation-duration:'+(1.8+Math.random()*1.4)+'s';document.body.appendChild(d);setTimeout(()=>d.remove(),4200)}}
 function endRank(rk){const t=$('#tier'),n=$('#rn');if(!t||!n)return;
-const T=rk==1?['NUMBER ONE!','#ffd54a']:rk<=3?['PODIUM FINISH','#ffd54a']:rk<=10?['TOP 10','#4dd9ff']:rk<=23?['IN THE PRIZE ZONE','#4d9fff']:rk<=30?['TOP 30','#4d9fff']:['KEEP CLIMBING','#9aa1b5'];
-t.textContent=T[0];t.style.color=T[1];n.style.color=T[1];if(rk<=30)n.style.textShadow='0 0 40px '+T[1];if(rk<=10)n.style.animation='pop2 .6s ease-out';
+const T=rk==1?['NUMBER ONE!','#ffd54a']:rk<=3?['PODIUM FINISH','#ffd54a']:rk<=10?['TOP 10','#4dd9ff']:rk<=50?['IN THE PRIZE ZONE','#4d9fff']:['KEEP CLIMBING','#9aa1b5'];
+t.textContent=T[0];t.style.color=T[1];n.style.color=T[1];if(rk<=50)n.style.textShadow='0 0 40px '+T[1];if(rk<=10)n.style.animation='pop2 .6s ease-out';
 if(rk<=3)confetti(rk==1?90:45);if(navigator.vibrate&&rk<=10)navigator.vibrate(rk==1?[80,60,80,60,200]:[100,60,100]);
 try{[523,659,784,1047].slice(0,rk==1?4:rk<=10?3:2).forEach((f,i)=>osc(AC.currentTime+i*.12,f,.4,.3,'triangle'))}catch(e){}
 const b=$('#btns');if(b)b.style.opacity=1}
@@ -198,7 +198,7 @@ roll(0,fin?r/1000:Q.i,2200,v=>{$('#sc').textContent=fin?v.toFixed(3)+'s':Math.ro
 const pb=$('#pb');if(!pb)return;pb.textContent=prev?(better?'NEW PERSONAL BEST':'Best so far: '+rs(BR())):'';if(prev&&!better)say('Not bad. You can do it. Rush again!');
 if(better&&prev)try{[523,659,784].forEach((f,i)=>osc(AC.currentTime+i*.1,f,.3,.3,'triangle'))}catch(e){}
 setTimeout(()=>{const k=$('#rk');if(!k)return;k.style.opacity=1;
-roll(N,rk,rk<N?3200:500,v=>{const q=Math.round(v);$('#rn').textContent='#'+q;$('#tier').textContent=q<=1?'NUMBER ONE!':q<=3?'PODIUM':q<=10?'TOP 10':q<=30?'TOP 30':''},()=>endRank(rk),1)},better&&prev?1000:500)},1)}
+roll(N,rk,rk<N?3200:500,v=>{const q=Math.round(v);$('#rn').textContent='#'+q;$('#tier').textContent=q<=1?'NUMBER ONE!':q<=3?'PODIUM':q<=10?'TOP 10':q<=50?'PRIZE ZONE':''},()=>endRank(rk),1)},better&&prev?1000:500)},1)}
 // ---------- leaderboard ----------
 async function board(){show('<div class="c" style="margin-top:200px"><h2>Loading…</h2></div>');const {L,rk,b,N}=await getBoard(12);
 show(`<h2>Leaderboard</h2><div class="card c">${rk?`Your rank<div style="font-size:56px;font-weight:900">#${rk}</div><span class="mut">of ${N} players</span>`:'Finish a run to get ranked'}</div>
