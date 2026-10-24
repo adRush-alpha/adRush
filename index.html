@@ -2,12 +2,12 @@
 <html lang="en"><head><meta charset="utf-8"><title>adRush</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <style>
-:root{--bg:#000308;--hot:#ff4d6d;--fg:#f5f6fb;--mut:#8f97b2;--card:rgba(255,255,255,.06);--line:rgba(90,170,255,.22);--acc:#1e90ff;--acc2:#4dd9ff;--g:linear-gradient(135deg,#0057ff,#00c8ff);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root{--bg:#000308;--hot:#ff4d6d;--fg:#f5f6fb;--mut:#8f97b2;--card:rgba(255,255,255,.06);--line:rgba(90,170,255,.22);--acc:#1e90ff;--acc2:#4dd9ff;--g:linear-gradient(135deg,#0057ff,#00c8ff);box-sizing:border-box}
 @media(prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#f1f2f9;--fg:#12141c;--mut:#5b6277;--card:rgba(255,255,255,.85);--line:rgba(0,0,0,.1)}}
 :root[data-theme="dark"]{--bg:#000308;--fg:#f5f6fb;--mut:#8f97b2;--card:rgba(255,255,255,.06);--line:rgba(90,170,255,.22)}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;min-height:100%}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;min-height:100%;overscroll-behavior-y:none}
 body{background:radial-gradient(900px 500px at 80% -10%,rgba(0,120,255,.35),transparent),radial-gradient(700px 500px at -10% 100%,rgba(0,200,255,.18),transparent),var(--bg);background-attachment:fixed;color:var(--fg);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-#app{max-width:480px;margin:0 auto;padding:16px;min-height:100vh}
+#app{max-width:480px;margin:0 auto;padding:calc(16px + env(safe-area-inset-top,0px)) 16px calc(16px + env(safe-area-inset-bottom,0px));min-height:100vh;min-height:100dvh}
 h1{font-size:40px;margin:8px 0;letter-spacing:-1.5px;font-weight:900}h2{margin:6px 0 10px;font-weight:800}
 .logo b{background:var(--g);-webkit-background-clip:text;background-clip:text;color:transparent}.mut{color:var(--mut)}.c{text-align:center}
 .card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;margin:12px 0;backdrop-filter:blur(10px)}
@@ -147,9 +147,9 @@ function home(){music(false);const l=left();document.body.className='';show(`<di
 // ---------- ad ----------
 let AD;
 async function playAd(study){initAudio();if(!study&&!await spend())return;music(false);try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();AC.resume()}catch(e){}try{speechSynthesis.cancel();speechSynthesis.getVoices()}catch(e){}AD={t:0,p:false,l:performance.now(),sc:-1};
-show(`<div class="row" style="margin-bottom:10px"><span class="tag">${study?'STUDY MODE':'WATCH CLOSELY'}</span><span class="mut">Feastables</span></div><div class="scene" id="sc"></div><div class="bar" style="margin:14px 0"><i id="pb"></i></div>
+show(`<div style="display:flex;flex-direction:column;min-height:calc(100vh - 32px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));min-height:calc(100dvh - 32px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))"><div class="c" style="padding-top:6px"><div class="mut" style="font-size:11px;letter-spacing:3px">SPONSOR</div><div style="font-size:24px;font-weight:900;letter-spacing:2px;color:var(--acc2);text-shadow:0 0 24px rgba(77,217,255,.5)">FEASTABLES</div>${study?'<span class="tag" style="margin-top:6px">STUDY MODE</span>':''}</div><div style="flex:1;display:flex;flex-direction:column;justify-content:center"><div class="scene" id="sc"></div><div class="bar" style="margin:14px 0"><i id="pb"></i></div>
 ${study?`<input type="range" id="sl" min="0" max="29999" value="0" oninput="AD.t=+this.value">
-<div class="row"><button class="btn alt" style="margin:0" onclick="AD.p=!AD.p;this.textContent=AD.p?'Play':'Pause'">Pause</button><button class="btn alt" style="margin:0" onclick="shareAd()">Share ad</button></div><button class="btn" onclick="stopAd();home()">Done</button>`:''}`);
+<div class="row"><button class="btn alt" style="margin:0" onclick="AD.p=!AD.p;this.textContent=AD.p?'Play':'Pause'">Pause</button><button class="btn alt" style="margin:0" onclick="shareAd()">Share ad</button></div><button class="btn" onclick="stopAd();home()">Done</button>`:''}</div></div>`);
 AD.iv=setInterval(()=>{const n=performance.now();if(!AD.p)AD.t+=n-AD.l;AD.l=n;
 if(AD.t>=30000){if(study)AD.t=0;else{stopAd();return rush()}}
 const k=Math.min(5,Math.floor(AD.t/5000));if(AD.sc!==k){AD.sc=k;$('#sc').innerHTML=scene(k)}
