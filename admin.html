@@ -18,7 +18,7 @@ import{initializeApp}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-ap
 import{getAuth,onAuthStateChanged,GoogleAuthProvider,signInWithPopup,signOut}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import{getFirestore,doc,getDoc,setDoc,collection,query,orderBy,limit,getDocs,where,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 const cfg={apiKey:"AIzaSyDlQddOV0Pr8llE3Rg6aX9vzCWw2XvFvFQ",authDomain:"adrush-825e9.firebaseapp.com",projectId:"adrush-825e9",storageBucket:"adrush-825e9.firebasestorage.app",messagingSenderId:"494182744553",appId:"1:494182744553:web:ba06748a4308b630b74b78",measurementId:"G-W64SZE8F9K"};
-const app=initializeApp(cfg),auth=getAuth(app),db=getFirestore(app);
+const app=initializeApp(cfg,'admin'),auth=getAuth(app),db=getFirestore(app);
 const REG={AF:{n:'Africa & Middle East',off:2,cur:'R',i:0},EU:{n:'Europe',off:1,cur:'€',i:1},AP:{n:'Asia-Pacific',off:8,cur:'$',i:2},AM:{n:'Americas',off:-5,cur:'$',i:3}};
 const DAY=864e5,RK=1e8,$=q=>document.querySelector(q);
 // PRIZE TABLE: change these numbers to match the prizes shown in the game
@@ -28,7 +28,7 @@ let U=null,ROWS=[],CUR={};
 onAuthStateChanged(auth,u=>{U=u;draw()});
 function rounds(rg){const OFF=REG[rg].off*36e5,now=Date.now(),di=Math.floor((now+OFF)/DAY),out=[];
 for(let d=di;d>di-40&&out.length<8;d--){const w=(d+4)%7;if((w==2||w==5)&&d*DAY-OFF<=now)out.push({d,l:(w==2?'Tue–Wed ':'Fri–Sat ')+new Date(d*DAY).toISOString().slice(0,10)})}return out}
-function draw(){if(!U){$('#app').innerHTML='<h1>adRush admin</h1><p class="mut">Sign in with the Google account you set as admin.</p><button class="b" onclick="signin()">Sign in with Google</button>';return}
+function draw(){if(!U||!U.email){$('#app').innerHTML='<h1>adRush admin</h1><p class="mut">Sign in with the Google account you set as admin.</p><button class="b" onclick="signin()">Sign in with Google</button>';return}
 $('#app').innerHTML=`<h1>adRush winners</h1><p class="mut">${esc(U.email)} · <u onclick="signout()">sign out</u></p>
 <select id="rg" onchange="fillRounds()">${Object.entries(REG).map(([k,v])=>`<option value="${k}">${v.n}</option>`).join('')}</select>
 <select id="rd"></select><button class="b" onclick="load()">Load winners</button><div id="out"></div>`;fillRounds()}
