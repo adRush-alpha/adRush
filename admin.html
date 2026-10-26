@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>adRush admin</title><meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{--bg:#050914;--fg:#f2f4fa;--mut:#8f97b2;--card:#101a30;--line:#24385e;--acc:#4dd9ff;--bad:#ff6b81;--ok:#4cd98a}
+@media(prefers-color-scheme:light){:root{--bg:#f1f2f9;--fg:#12141c;--mut:#5b6277;--card:#fff;--line:#d5d9e6;--acc:#0a6cff;--bad:#c62840;--ok:#1a8f4d}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,sans-serif;padding:14px;max-width:560px;margin:0 auto}
+h1{font-size:22px;margin:6px 0 12px}.mut{color:var(--mut)}
+select,button{width:100%;padding:13px;margin:6px 0;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--fg);font-size:16px}
+button.b{background:var(--acc);color:#000;font-weight:800;border:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin:10px 0}
+.row{display:flex;justify-content:space-between;gap:8px}.big{font-weight:800}
+.warn{color:var(--bad);font-size:13px}.paid{opacity:.55}
+label.p{display:flex;gap:10px;align-items:center;margin-top:8px;font-weight:700}label.p input{width:24px;height:24px}
+</style></head><body><div id="app"></div>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import{getAuth,onAuthStateChanged,GoogleAuthProvider,signInWithPopup,signOut}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import{getFirestore,doc,getDoc,setDoc,collection,query,orderBy,limit,getDocs,where,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+const cfg={apiKey:"AIzaSyDlQddOV0Pr8llE3Rg6aX9vzCWw2XvFvFQ",authDomain:"adrush-825e9.firebaseapp.com",projectId:"adrush-825e9",storageBucket:"adrush-825e9.firebasestorage.app",messagingSenderId:"494182744553",appId:"1:494182744553:web:ba06748a4308b630b74b78",measurementId:"G-W64SZE8F9K"};
+const app=initializeApp(cfg),auth=getAuth(app),db=getFirestore(app);
+const REG={AF:{n:'Africa & Middle East',off:2,cur:'R',i:0},EU:{n:'Europe',off:1,cur:'€',i:1},AP:{n:'Asia-Pacific',off:8,cur:'$',i:2},AM:{n:'Americas',off:-5,cur:'$',i:3}};
+const DAY=864e5,RK=1e8,$=q=>document.querySelector(q);
+// PRIZE TABLE: change these numbers to match the prizes shown in the game
+const prize=r=>r==1?20:r==2?10:r==3?5:r<=50?1:0;
+const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let U=null,ROWS=[],CUR={};
+onAuthStateChanged(auth,u=>{U=u;draw()});
+function rounds(rg){const OFF=REG[rg].off*36e5,now=Date.now(),di=Math.floor((now+OFF)/DAY),out=[];
+for(let d=di;d>di-40&&out.length<8;d--){const w=(d+4)%7;if((w==2||w==5)&&d*DAY-OFF<=now)out.push({d,l:(w==2?'Tue–Wed ':'Fri–Sat ')+new Date(d*DAY).toISOString().slice(0,10)})}return out}
+function draw(){if(!U){$('#app').innerHTML='<h1>adRush admin</h1><p class="mut">Sign in with the Google account you set as admin.</p><button class="b" onclick="signin()">Sign in with Google</button>';return}
+$('#app').innerHTML=`<h1>adRush winners</h1><p class="mut">${esc(U.email)} · <u onclick="signout()">sign out</u></p>
+<select id="rg" onchange="fillRounds()">${Object.entries(REG).map(([k,v])=>`<option value="${k}">${v.n}</option>`).join('')}</select>
+<select id="rd"></select><button class="b" onclick="load()">Load winners</button><div id="out"></div>`;fillRounds()}
+window.fillRounds=()=>{$('#rd').innerHTML=rounds($('#rg').value).map(r=>`<option value="${r.d}">${r.l}</option>`).join('')}
+window.signin=async()=>{try{await signInWithPopup(auth,new GoogleAuthProvider())}catch(e){alert('Sign-in failed: '+(e.code||e.message))}}
+window.signout=()=>signOut(auth)
+window.load=async()=>{const rg=$('#rg').value,R=+$('#rd').value,lo=REG[rg].i*1e13+R*RK;$('#out').innerHTML='<p class="mut">Loading…</p>';
+try{const s=await getDocs(query(collection(db,'scores'),where('rkey','>=',lo),where('rkey','<',lo+RK),orderBy('rkey','desc'),limit(50)));
+ROWS=[];CUR={rg,R};let i=0;
+for(const d of s.docs){i++;const x=d.data(),r={uid:d.id,rank:i,name:x.name,done:x.done,t:x.t,prize:prize(i)};
+const[c,g,p]=await Promise.all([getDoc(doc(db,'contacts',d.id)),getDoc(doc(db,'guardians',d.id)),getDoc(doc(db,'payouts',R+'_'+rg+'_'+d.id))]);
+r.contact=c.exists()?c.data().contact:'';r.g=g.exists()?g.data():null;r.paid=p.exists()&&p.data().paid===true;ROWS.push(r)}
+render()}catch(e){$('#out').innerHTML='<p class="warn">Error: '+esc(e.code||e.message)+'</p>'}}
+function render(){const cur=REG[CUR.rg].cur,seen={};
+ROWS.forEach(r=>{const k=(r.contact||'').toLowerCase().replace(/\s/g,'');if(k)seen[k]=(seen[k]||0)+1});
+const tot=ROWS.reduce((a,r)=>a+r.prize,0),due=ROWS.filter(r=>!r.paid).reduce((a,r)=>a+r.prize,0);
+$('#out').innerHTML=`<div class="card"><b>${ROWS.length}</b> winners · total <b>${cur}${tot}</b> · still to pay <b>${cur}${due}</b></div><button class="b" onclick="csv()">Download CSV</button>`+
+(ROWS.length?ROWS.map((r,i)=>{const k=(r.contact||'').toLowerCase().replace(/\s/g,'');
+return `<div class="card ${r.paid?'paid':''}"><div class="row"><span class="big">#${r.rank} ${esc(r.name)}</span><span class="big">${cur}${r.prize}</span></div>
+<div class="mut">${r.done}/40 in ${(r.t/1000).toFixed(1)}s</div>
+<div>${r.contact?'Contact: '+esc(r.contact):'<span class="warn">No contact on file</span>'}</div>
+${r.g?`<div>Minor · guardian: ${esc(r.g.name)}, ${esc(r.g.phone)}</div>`:''}
+${k&&seen[k]>1?'<div class="warn">Same contact as another winner. Pay the best place only.</div>':''}
+<label class="p"><input type="checkbox" ${r.paid?'checked':''} onchange="pay(${i},this.checked)"> Paid</label></div>`}).join(''):'<p class="mut">No scores for that round.</p>')}
+window.pay=async(i,v)=>{const r=ROWS[i];try{await setDoc(doc(db,'payouts',CUR.R+'_'+CUR.rg+'_'+r.uid),{paid:v,amount:r.prize,name:r.name,at:serverTimestamp()});r.paid=v;render()}catch(e){alert('Could not save ('+(e.code||e.message)+')')}}
+window.csv=()=>{const q=x=>'"'+String(x??'').replace(/"/g,'""')+'"',L=[['Rank','Name','Correct','Seconds','Prize','Contact','Guardian','Guardian phone','Paid','UID'].map(q).join(',')];
+ROWS.forEach(r=>L.push([r.rank,r.name,r.done,(r.t/1000).toFixed(1),r.prize,r.contact,r.g?r.g.name:'',r.g?r.g.phone:'',r.paid?'yes':'no',r.uid].map(q).join(',')));
+const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([L.join('\n')],{type:'text/csv'}));a.download='adrush-winners-'+CUR.rg+'-'+CUR.R+'.csv';a.click()}
+</script></body></html>
