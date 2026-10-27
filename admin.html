@@ -24,11 +24,13 @@ const DAY=864e5,RK=1e8,$=q=>document.querySelector(q);
 // PRIZE TABLE: change these numbers to match the prizes shown in the game
 const prize=r=>r==1?20:r==2?10:r==3?5:r<=50?1:0;
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let U=null,ROWS=[],CUR={};
-onAuthStateChanged(auth,u=>{U=u;draw()});
+let U=null,AUTH=null,ROWS=[],CUR={};
+onAuthStateChanged(auth,async u=>{U=u;AUTH=null;draw();if(u&&u.email){try{await getDoc(doc(db,'payouts','_probe'));AUTH=true}catch(e){AUTH=false}draw()}});
 function rounds(rg){const OFF=REG[rg].off*36e5,now=Date.now(),di=Math.floor((now+OFF)/DAY),out=[];
 for(let d=di;d>di-40&&out.length<8;d--){const w=(d+4)%7;if((w==2||w==5)&&d*DAY-OFF<=now)out.push({d,l:(w==2?'Tue–Wed ':'Fri–Sat ')+new Date(d*DAY).toISOString().slice(0,10)})}return out}
 function draw(){if(!U||!U.email){$('#app').innerHTML='<h1>adRush admin</h1><p class="mut">Sign in with the Google account you set as admin.</p><button class="b" onclick="signin()">Sign in with Google</button>';return}
+if(AUTH===null){$('#app').innerHTML='<h1>adRush winners</h1><p class="mut">Checking access…</p>';return}
+if(AUTH===false){$('#app').innerHTML=`<h1>Not authorised</h1><p class="mut">${esc(U.email)} does not have access to this page.</p><button onclick="signout()">Sign out</button>`;return}
 $('#app').innerHTML=`<h1>adRush winners</h1><p class="mut">${esc(U.email)} · <u onclick="signout()">sign out</u></p>
 <select id="rg" onchange="fillRounds()">${Object.entries(REG).map(([k,v])=>`<option value="${k}">${v.n}</option>`).join('')}</select>
 <select id="rd"></select><button class="b" onclick="load()">Load winners</button><div id="out"></div>`;fillRounds()}
@@ -53,7 +55,7 @@ return `<div class="card ${r.paid?'paid':''}"><div class="row"><span class="big"
 ${r.g?`<div>Minor · guardian: ${esc(r.g.name)}, ${esc(r.g.phone)}</div>`:''}
 ${k&&seen[k]>1?'<div class="warn">Same contact as another winner. Pay the best place only.</div>':''}
 <label class="p"><input type="checkbox" ${r.paid?'checked':''} onchange="pay(${i},this.checked)"> Paid</label></div>`}).join(''):'<p class="mut">No scores for that round.</p>')}
-window.pay=async(i,v)=>{const r=ROWS[i];try{await setDoc(doc(db,'payouts',CUR.R+'_'+CUR.rg+'_'+r.uid),{paid:v,amount:r.prize,name:r.name,at:serverTimestamp()});r.paid=v;render()}catch(e){alert('Could not save ('+(e.code||e.message)+')')}}
+window.pay=async(i,v)=>{const r=ROWS[i];try{await setDoc(doc(db,'payouts',CUR.R+'_'+CUR.rg+'_'+r.uid),{paid:v,amount:r.prize,name:r.name,by:U.email,at:serverTimestamp()});r.paid=v;render()}catch(e){alert('Could not save ('+(e.code||e.message)+')')}}
 window.csv=()=>{const q=x=>'"'+String(x??'').replace(/"/g,'""')+'"',L=[['Rank','Name','Correct','Seconds','Prize','Contact','Guardian','Guardian phone','Paid','UID'].map(q).join(',')];
 ROWS.forEach(r=>L.push([r.rank,r.name,r.done,(r.t/1000).toFixed(1),r.prize,r.contact,r.g?r.g.name:'',r.g?r.g.phone:'',r.paid?'yes':'no',r.uid].map(q).join(',')));
 const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([L.join('\n')],{type:'text/csv'}));a.download='adrush-winners-'+CUR.rg+'-'+CUR.R+'.csv';a.click()}
