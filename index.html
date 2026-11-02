@@ -51,14 +51,16 @@ const DAY=864e5;
 const REG={AF:{n:'Africa & Middle East',off:2,cur:'R',live:1},EU:{n:'Europe',off:1,cur:'€',live:0},AP:{n:'Asia-Pacific',off:8,cur:'$',live:0},AM:{n:'Americas',off:-5,cur:'$',live:0}};
 const rg=()=>REG[S.region]?S.region:'AF',cur=()=>REG[rg()].cur;
 function regionOf(p){const d=p.replace(/\D/g,''),a=d[0],b=d.slice(0,2);if(a=='1'||a=='5')return'AM';if(a=='2')return'AF';if(a=='3'||a=='4'||a=='7'||b=='90')return'EU';if(a=='6'||a=='8')return'AP';if(a=='9')return['96','97','98'].includes(b)?'AF':'AP';return'AF'}
+const ALLDAYS=true;// TESTING: every day is a play day with its own daily round. Set to false to go back to Tue-Wed / Fri-Sat rounds with paydays.
 function phase(now){const R=REG[rg()];if(!R.live)return{open:0,show:0,locked:1};now=now||Date.now();const OFF=R.off*36e5,di=Math.floor((now+OFF)/DAY),dw=(di+4)%7,mid=k=>k*DAY-OFF;
+if(ALLDAYS)return{open:1,id:di,show:di,end:mid(di+1)};
 if(dw==2||dw==3||dw==5||dw==6){const st=dw<=3?di-(dw-2):di-(dw-5);return{open:1,id:st,show:st,end:mid(st+2)}}
 if(dw==4)return{open:0,show:di-2,next:mid(di+1),msg:'PAYDAY'};
 if(dw==1)return{open:0,show:di-3,next:mid(di+1),msg:'PAYDAY'};
 return{open:0,show:di-2,next:mid(di+2),msg:'REST DAY'}}
 function dayRoll(){const p=phase();if(p.open&&S.round!==p.id){S.round=p.id;S.used=0;S.earned=0;save()}}
 function dur(ms){ms=Math.max(0,ms);const t=Math.floor(ms/1000),d=Math.floor(t/86400),h=Math.floor(t%86400/3600),m=Math.floor(t%3600/60),x=t%60,p=n=>String(n).padStart(2,'0');return(d?d+'d ':'')+p(h)+':'+p(m)+':'+p(x)}
-function roundName(){return(phase().show+4)%7==2?'Tue–Wed':'Fri–Sat'}
+function roundName(){if(ALLDAYS)return'Daily';return(phase().show+4)%7==2?'Tue–Wed':'Fri–Sat'}
 function banner(){const p=phase(),n=Date.now(),R=REG[rg()].n;if(p.locked)return `<b>${R}</b><br>Opening soon`;if(p.open){if(p.end-n<36e5)return `<b style="color:var(--hot)">⏰ LAST HOUR · ${R}</b><br><span style="color:var(--hot)">Ends in ${dur(p.end-n)}</span>`;return `<b>${R}</b> · ${roundName()} round LIVE<br>Ends in ${dur(p.end-n)}`}return `<b>${R}</b> · ${p.msg}<br>Next round in ${dur(p.next-n)}`}
 let HO;setInterval(()=>{const e=$('#rd');if(!e)return;if(!!phase().open!==HO)return home();e.innerHTML=banner()},1000);
 const TEST=false;const left=()=>{dayRoll();return TEST?999:Math.max(0,8+S.earned-(S.used||0))};
