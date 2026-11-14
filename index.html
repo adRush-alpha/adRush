@@ -54,7 +54,7 @@ try{S=Object.assign(S,JSON.parse(localStorage.getItem('adrush')||'{}'))}catch(e)
 const save=()=>{try{localStorage.setItem('adrush',JSON.stringify(S))}catch(e){}};
 const show=h=>{let q=0;try{q=Q&&!Q.done&&PH=='play'}catch(e){}app.className=q?'':'f';app.innerHTML=h;scrollTo(0,0)};
 const fmt=ms=>(Math.max(0,ms)/1000).toFixed(3)+'s';
-const DAY=864e5,PZ=50;
+const DAY=864e5,PZ=13;
 // Regions: fixed UTC offsets (no daylight saving). Set live:1 to open a region.
 const REG={AF:{n:'South Africa',off:2,cur:'R',live:1}};
 const rg=()=>REG[S.region]?S.region:'AF',cur=()=>REG[rg()].cur;
@@ -172,7 +172,7 @@ function home(){music(false);const l=left();HO=!!phase().open;document.body.clas
 <div class="tiles"><div class="tile" style="padding:8px"><span class="mut" style="font-size:13px">Tries left this round</span><b style="font-size:26px">${l>=999?'∞':l}</b></div><div class="tile" style="padding:8px"><span class="mut" style="font-size:13px">Best run</span><b style="font-size:17px;padding:5px 0">${rs(BR())}</b></div></div>
 <button class="btn" style="margin:12px 0;padding:20px;font-size:21px;letter-spacing:3px" ${l<1||!phase().open?'disabled':''} onclick="playAd(false)">PLAY</button>
 <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px"><button class="btn alt" style="margin:0;padding:12px 4px;font-size:14px" onclick="rules()">Rules</button><button class="btn alt" style="margin:0;padding:12px 4px;font-size:14px" onclick="board()">Leaderboard</button><button class="btn alt" style="margin:0;padding:12px 4px;font-size:14px" onclick="earn()">Earn tries</button></div>
-<div class="card prz" style="padding:8px 14px;margin:10px 0 0"><div class="mut c" style="font-size:12px;letter-spacing:2px">PRIZES</div><div class="lb" style="padding:5px 4px;font-size:14px"><span><i class="md" style="background:#f5c96a"></i>1st place</span><span>${cur()}20</span></div><div class="lb" style="padding:5px 4px;font-size:14px"><span><i class="md" style="background:#c9d2e6"></i>2nd place</span><span>${cur()}10</span></div><div class="lb" style="padding:5px 4px;font-size:14px"><span><i class="md" style="background:#d89560"></i>3rd place</span><span>${cur()}5</span></div><div class="lb" style="padding:5px 4px;font-size:14px;border:0"><span><i class="md" style="background:#2f8cff"></i>4th to 50th</span><span>${cur()}1 each</span></div></div><div id="cl"></div><p class="c mut" style="font-size:13px;margin:12px 0 4px" onclick="setContact()"><u>Contact details (optional)</u></p>${/debug/.test(location.search)?`<p class="c mut" style="font-size:12px">${VID?'Video ad found (ad.mp4)':'No ad.mp4 found: the game cannot start'}</p>`:''}`);showClaim()}
+<div class="card prz" style="padding:8px 14px;margin:10px 0 0"><div class="mut c" style="font-size:12px;letter-spacing:2px">PRIZES</div><div class="lb" style="padding:5px 4px;font-size:14px"><span><i class="md" style="background:#f5c96a"></i>1st place</span><span>${cur()}2,000</span></div><div class="lb" style="padding:5px 4px;font-size:14px"><span><i class="md" style="background:#c9d2e6"></i>2nd place</span><span>${cur()}1,000</span></div><div class="lb" style="padding:5px 4px;font-size:14px"><span><i class="md" style="background:#d89560"></i>3rd place</span><span>${cur()}500</span></div><div class="lb" style="padding:5px 4px;font-size:14px;border:0"><span><i class="md" style="background:#2f8cff"></i>4th to 13th</span><span>${cur()}250 each</span></div></div><div id="cl"></div><p class="c mut" style="font-size:13px;margin:12px 0 4px" onclick="setContact()"><u>Contact details (optional)</u></p>${/debug/.test(location.search)?`<p class="c mut" style="font-size:12px">${VID?'Video ad found (ad.mp4)':'No ad.mp4 found: the game cannot start'}</p>`:''}`);showClaim()}
 // ---------- ad ----------
 let AD;
 async function playAd(study){initAudio();await checkVid();if(!VID||!await vidReady()){alert('The ad could not load. Check your connection and try again.');return}if(!study&&!await spend())return;USEVID=VID;if(!study)track('ad_start',{region:rg()});music(false);try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();AC.resume()}catch(e){}try{speechSynthesis.cancel();speechSynthesis.getVoices()}catch(e){}AD={t:0,p:false,l:performance.now(),sc:-1};
@@ -211,8 +211,8 @@ if(snd&&now-lt>70&&p<1){lt=now;try{osc(AC.currentTime,300+p*700,.06,.25,'square'
 if(p<1)requestAnimationFrame(f);else if(done)done()})(t0)}
 function confetti(n){const C=['#ffd54a','#4dd9ff','#4d9fff','#ff4d6d','#fff'];for(let i=0;i<n;i++){const d=document.createElement('div');d.className='cf';d.style.cssText='left:'+Math.random()*100+'vw;background:'+C[i%5]+';animation-delay:'+Math.random()*.8+'s;animation-duration:'+(1.8+Math.random()*1.4)+'s';document.body.appendChild(d);setTimeout(()=>d.remove(),4200)}}
 function endRank(rk){const t=$('#tier'),n=$('#rn');if(!t||!n)return;const pl=$('#pctl');if(pl)pl.textContent=pctMsg(rk,LN);
-const T=rk==1?['NUMBER ONE!','#ffd54a']:rk<=3?['PODIUM FINISH','#ffd54a']:rk<=10?['TOP 10','#4dd9ff']:rk<=50?['IN THE PRIZE ZONE','#4d9fff']:['KEEP CLIMBING','#9aa1b5'];
-t.textContent=T[0];t.style.color=T[1];n.style.color=T[1];if(rk<=50)n.style.textShadow='0 0 40px '+T[1];if(rk<=10)n.style.animation='pop2 .6s ease-out';
+const T=rk==1?['NUMBER ONE!','#ffd54a']:rk<=3?['PODIUM FINISH','#ffd54a']:rk<=10?['TOP 10','#4dd9ff']:rk<=PZ?['IN THE PRIZE ZONE','#4d9fff']:['KEEP CLIMBING','#9aa1b5'];
+t.textContent=T[0];t.style.color=T[1];n.style.color=T[1];if(rk<=PZ)n.style.textShadow='0 0 40px '+T[1];if(rk<=10)n.style.animation='pop2 .6s ease-out';
 if(rk<=3)confetti(rk==1?90:45);if(navigator.vibrate&&rk<=10)navigator.vibrate(rk==1?[80,60,80,60,200]:[100,60,100]);
 try{[523,659,784,1047].slice(0,rk==1?4:rk<=10?3:2).forEach((f,i)=>osc(AC.currentTime+i*.12,f,.4,.3,'triangle'))}catch(e){}
 const b=$('#btns');if(b)b.style.opacity=1}
@@ -233,7 +233,7 @@ roll(0,fin?r/1000:Q.i,2200,v=>{$('#sc').textContent=fin?v.toFixed(3)+'s':Math.ro
 const pb=$('#pb');if(!pb)return;pb.textContent=prev?(better?'NEW PERSONAL BEST':'Best so far: '+rs(BR())):'';if(prev&&!better)say('Not bad. You can do it. Rush again!');
 if(better&&prev)try{[523,659,784].forEach((f,i)=>osc(AC.currentTime+i*.1,f,.3,.3,'triangle'))}catch(e){}
 setTimeout(()=>{const k=$('#rk');if(!k)return;k.style.opacity=1;
-roll(N,rk,rk<N?3200:500,v=>{const q=Math.round(v);$('#rn').textContent='#'+q;$('#tier').textContent=q<=1?'NUMBER ONE!':q<=3?'PODIUM':q<=10?'TOP 10':q<=50?'PRIZE ZONE':''},()=>endRank(rk),1)},better&&prev?1000:500)},1)}
+roll(N,rk,rk<N?3200:500,v=>{const q=Math.round(v);$('#rn').textContent='#'+q;$('#tier').textContent=q<=1?'NUMBER ONE!':q<=3?'PODIUM':q<=10?'TOP 10':q<=PZ?'PRIZE ZONE':''},()=>endRank(rk),1)},better&&prev?1000:500)},1)}
 // ---------- leaderboard ----------
 let LN=1;
 const pctMsg=(rk,N)=>{if(!rk||!N)return'';if(N<5)return rk==1?'You’re in the lead!':'You’re in the hunt!';if(rk==1)return'You’re #1 right now!';const top=Math.max(1,Math.ceil(rk/N*100)),beat=Math.round((N-rk)/N*100);if(top<=10)return`Elite: you’re in the top ${top}% of players!`;if(top<=25)return`You’re in the top ${top}% of players. Keep pushing!`;if(top<=50)return`You’re ahead of ${beat}% of players!`;return beat>0?`You’ve beaten ${beat}% of players. One more run can lift you!`:'Everyone is within reach. One more run!'};
